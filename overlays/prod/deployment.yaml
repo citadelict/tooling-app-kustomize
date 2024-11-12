@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tooling-deployment  
+spec:
+  replicas: 5  
+  template:
+    metadata:
+      labels:
+        app: tooling
+    spec:
+      containers:
+        - name: tooling
+          image: citatech/tooling-app
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "1"
+            limits:
+              memory: "512Mi"
+              cpu: "2"
+          env:
+            - name: DB_HOST
+              value: "tooling-aurora-cluster.cluster-c3a0ywg2a6ua.us-west-1.rds.amazonaws.com" 
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "tooling_db"        
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: aurora-db-credentials     
+                  key: DB_USERNAME              
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aurora-db-credentials
+                  key: DB_PASSWORD              
